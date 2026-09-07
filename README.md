@@ -1,6 +1,6 @@
-# Parcheggio Ulivi
+# Ulvi Parking
 
-> A Java 11 command-line application for managing a multi-level car park, including vehicle check-in and check-out, parking-space allocation, rental spaces, and daily revenue tracking.
+A Java 11 command-line application for managing a multi-level car park, including vehicle check-in and check-out, parking-space allocation, rental spaces, and daily revenue tracking.
 
 ![Java](https://img.shields.io/badge/Java-11-007396?style=flat-square)
 ![Console Application](https://img.shields.io/badge/Project-Console%20Application-555?style=flat-square)
@@ -103,4 +103,4 @@ The Git history records iterative development from November to December 2022, in
 
 ## License
 
-No license file or explicit license declaration is present in the repository. Licensing therefore requires human review.
+This project is shared for educational and portfolio purposes. All rights reserved unless otherwise stated.
