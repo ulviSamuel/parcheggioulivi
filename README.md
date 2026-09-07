@@ -1,426 +1,106 @@
 # Parcheggio Ulivi
 
-![Java](https://img.shields.io/badge/Java-Console%20Application-blue)
-![Stato](https://img.shields.io/badge/Stato-Progetto%20scolastico-orange)
-![Anno](https://img.shields.io/badge/Anno-2023-lightgrey)
-![Storage](https://img.shields.io/badge/Storage-CSV-green)
+> A Java 11 command-line application for managing a multi-level car park, including vehicle check-in and check-out, parking-space allocation, rental spaces, and daily revenue tracking.
 
-**Parcheggio Ulivi** è un progetto scolastico realizzato nel **2023** per simulare la gestione di un parcheggio multipiano tramite un'applicazione Java da console.
+![Java](https://img.shields.io/badge/Java-11-007396?style=flat-square)
+![Console Application](https://img.shields.io/badge/Project-Console%20Application-555?style=flat-square)
+![Academic Project](https://img.shields.io/badge/Classification-Academic%20Project-6f42c1?style=flat-square)
+![Year | 2022](https://img.shields.io/badge/Year%20%7C-2022-555?style=flat-square)
 
-Il programma utilizza la **programmazione orientata agli oggetti** e file `.csv` come sistema di salvataggio dei dati, permettendo di gestire auto, scooter, auto elettriche, piazzole ordinarie, piazzole affittabili e posti con ricarica.
+> [!NOTE]
+> This repository contains an academic project originally developed during earlier programming studies. It is preserved as a record of the technical knowledge, design decisions, and development experience acquired at the time.
 
----
+## Overview
 
-## Indice
+Parcheggio Ulivi is an interactive console program that models a multi-level parking facility. It manages cars and scooters, assigns vehicles to different types of parking spaces, persists the parking state in CSV files, and calculates parking and rental revenue during the current run.
 
-- [Descrizione](#descrizione)
-- [Funzionalità](#funzionalità)
-- [Struttura del parcheggio](#struttura-del-parcheggio)
-- [Tecnologie utilizzate](#tecnologie-utilizzate)
-- [Struttura del progetto](#struttura-del-progetto)
-- [Architettura](#architettura)
-- [Formato dei file CSV](#formato-dei-file-csv)
-- [Tariffe e ricavi](#tariffe-e-ricavi)
-- [Validazione targhe](#validazione-targhe)
-- [Esecuzione del progetto](#esecuzione-del-progetto)
-- [Note sul progetto](#note-sul-progetto)
-- [Possibili miglioramenti futuri](#possibili-miglioramenti-futuri)
-- [Autore](#autore)
-- [Licenza](#licenza)
+The application is a historical educational project rather than a production-ready service. Its user-facing messages are implemented in Italian.
 
----
+## Features
 
-## Descrizione
+- Check in cars and scooters after validating their license-plate format.
+- Distinguish electric and non-electric cars, including optional placement in charging spaces.
+- Display all spaces, only free spaces, or rentable spaces across the configured parking levels.
+- Search for a parked vehicle by license plate.
+- Rent and cancel rental contracts for car spaces.
+- Check vehicles out and calculate the corresponding parking charge.
+- Display daily revenue, including rental revenue.
+- Persist parking-space state in the repository's CSV data files.
 
-L'obiettivo del progetto è gestire in modo semplice un parcheggio multipiano, salvando lo stato delle piazzole su file CSV.
+## Technology stack
 
-Ogni piazzola contiene informazioni come:
+- **Language:** Java
+- **Runtime level:** Java 11
+- **Interface:** Console input and output through `java.util.Scanner` and standard output
+- **Persistence:** CSV files read and written with Java I/O classes
+- **Project tooling:** Eclipse Java project metadata
 
-- numero identificativo;
-- stato di occupazione;
-- targa del veicolo parcheggiato;
-- ora e minuto di ingresso;
-- eventuale stato di affitto, per le piazzole affittabili.
+## Architecture and project structure
 
-Il progetto distingue diverse tipologie di veicoli e aree del parcheggio, permettendo una gestione differenziata tra auto ordinarie, auto elettriche e scooter.
-
----
-
-## Funzionalità
-
-Il gestionale permette di svolgere le principali operazioni legate a un parcheggio:
-
-- inserimento di auto ordinarie;
-- inserimento di auto elettriche;
-- inserimento di scooter;
-- uscita di un veicolo dal parcheggio;
-- ricerca di un veicolo tramite targa;
-- gestione di piazzole libere e occupate;
-- gestione delle piazzole affittabili;
-- affitto e disdetta di una piazzola;
-- calcolo del costo della sosta;
-- aggiornamento dei ricavi giornalieri;
-- controllo del formato delle targhe;
-- lettura e scrittura dei dati tramite file CSV.
-
----
-
-## Struttura del parcheggio
-
-Il parcheggio è suddiviso in più piani e settori, ognuno rappresentato da un file CSV.
-
-| File | Area | Descrizione | Numero piazzole |
-| --- | --- | --- | ---: |
-| `pianoA.csv` | Piano A | Auto con piazzole affittabili | 100 |
-| `pianoAScooter.csv` | Piano A Scooter | Area dedicata agli scooter | 50 |
-| `pianoB.csv` | Piano B | Auto ordinarie | 90 |
-| `pianoBRicarica.csv` | Piano B Ricarica | Auto elettriche con ricarica | 10 |
-| `pianoC.csv` | Piano C | Auto ordinarie | 100 |
-
----
-
-## Tecnologie utilizzate
-
-- **Java**
-- **Programmazione orientata agli oggetti**
-- **Package Java**
-- **Ereditarietà**
-- **Classi astratte**
-- **Enumerazioni**
-- **Gestione file** con `BufferedReader` e `BufferedWriter`
-- **File CSV** come database locale
-- **Applicazione da console**
-
----
-
-## Struttura del progetto
+The code is organized as a small console application with separate domain objects, business operations, and input utilities:
 
 ```text
-parcheggioulivi/
-│
-├── Main.java
-├── Console.java
-│
-├── bean/
-│   ├── Veicolo.java
-│   ├── Auto.java
-│   ├── Scooter.java
-│   ├── Piazzola.java
-│   ├── PiazzolaAuto.java
-│   ├── PiazzolaAutoAffittabile.java
-│   └── PiazzolaScooter.java
-│
-├── business/
-│   ├── BizDataBase.java
-│   ├── BizRicavi.java
-│   └── BizVeicoli.java
-│
-├── enumerations/
-│   ├── Motore.java
-│   ├── Piano.java
-│   └── SiNo.java
-│
-└── util/
-    └── Util.java
+.
+├── src/it/volta/ts/ulivisamuel/parcheggioulivi/
+│   ├── Main.java                 # Application entry point
+│   ├── Console.java              # Menu and interactive workflows
+│   ├── bean/                     # Vehicle and parking-space objects
+│   ├── business/                 # Parking, vehicle, persistence, and revenue logic
+│   ├── enumerations/             # Parking and vehicle-related enum values
+│   └── util/                     # Console input helpers
+├── pianoA.csv                   # Rentable car spaces
+├── pianoAScooter.csv            # Scooter spaces
+├── pianoB.csv                   # Ordinary car spaces
+├── pianoBRicarica.csv           # Charging spaces for electric cars
+├── pianoC.csv                   # Ordinary car spaces
+├── .classpath                   # Eclipse classpath and Java 11 level
+└── .project                     # Eclipse Java project definition
 ```
 
----
+`Main` creates a `Console` instance, which coordinates the menu and delegates parking and revenue operations to the classes in `business`. `BizDataBase` loads and rewrites the five CSV files as operations change the parking state.
 
-## Architettura
+## Getting started
 
-Il progetto è organizzato seguendo una separazione logica tra classi modello, logica applicativa, enumerazioni e utility.
+### Prerequisites
 
-### Package `bean`
+- A Java Development Kit compatible with Java 11.
+- A shell capable of running the compilation command below, or Eclipse with Java support.
 
-Contiene le classi che rappresentano gli oggetti principali del dominio.
+### Compile
 
-#### `Veicolo`
-
-Classe astratta di base per tutti i veicoli.
-
-Contiene:
-
-- `targa`
-
-Da questa classe derivano:
-
-- `Auto`
-- `Scooter`
-
-#### `Auto`
-
-Rappresenta un'automobile.
-
-Estende `Veicolo` e aggiunge l'informazione relativa al tipo di motore:
-
-- `ELETTRICO`
-- `NON_ELETTRICO`
-
-#### `Scooter`
-
-Rappresenta uno scooter e contiene la targa ereditata dalla classe `Veicolo`.
-
-#### `Piazzola`
-
-Classe astratta che rappresenta una piazzola generica del parcheggio.
-
-Contiene:
-
-- numero della piazzola;
-- stato di occupazione;
-- ora di entrata;
-- minuto di entrata.
-
-#### `PiazzolaAuto`
-
-Rappresenta una piazzola destinata alle auto.
-
-#### `PiazzolaAutoAffittabile`
-
-Estende `PiazzolaAuto` e aggiunge la possibilità di indicare se la piazzola è affittata.
-
-#### `PiazzolaScooter`
-
-Rappresenta una piazzola destinata agli scooter.
-
----
-
-### Package `business`
-
-Contiene la logica principale del programma.
-
-#### `BizDataBase`
-
-Gestisce le operazioni sui dati salvati nei file CSV.
-
-Si occupa di:
-
-- leggere le piazzole dai file;
-- cercare veicoli tramite targa;
-- parcheggiare auto ordinarie;
-- parcheggiare auto elettriche;
-- parcheggiare scooter;
-- liberare una piazzola all'uscita del veicolo;
-- aggiornare i file CSV;
-- gestire piazzole affittabili;
-- salvare informazioni temporanee utili per il calcolo del pedaggio.
-
-#### `BizRicavi`
-
-Gestisce il calcolo dei ricavi.
-
-Permette di:
-
-- calcolare il pedaggio in base alle ore di sosta;
-- aggiungere ricavi giornalieri;
-- aggiungere o rimuovere ricavi legati alle piazzole affittate.
-
-#### `BizVeicoli`
-
-Contiene i metodi di validazione delle targhe per auto e scooter.
-
----
-
-### Package `enumerations`
-
-Contiene le enumerazioni usate nel progetto.
-
-#### `Motore`
-
-Indica il tipo di motore di un'auto:
-
-```java
-ELETTRICO,
-NON_ELETTRICO
-```
-
-#### `SiNo`
-
-Rappresenta valori di tipo sì/no:
-
-```java
-SI,
-NO
-```
-
-#### `Piano`
-
-Rappresenta i piani e le aree del parcheggio:
-
-```java
-PIANO_A,
-PIANO_A_SCOOTER,
-PIANO_B,
-PIANO_B_RICARICA,
-PIANO_C
-```
-
----
-
-### Package `util`
-
-Contiene classi di supporto.
-
-#### `Util`
-
-Classe pensata per gestire operazioni comuni, come l'inserimento controllato di valori da tastiera tramite `Scanner`.
-
----
-
-## Formato dei file CSV
-
-I file CSV vengono usati come archivio locale per memorizzare lo stato del parcheggio.
-
-### Piazzole auto ordinarie, scooter e ricarica
-
-Esempio:
-
-```csv
-151,NO,NESSUNA,0,0
-```
-
-Campi:
-
-| Posizione | Significato | Esempio |
-| ---: | --- | --- |
-| 1 | Numero piazzola | `151` |
-| 2 | Occupata | `NO` |
-| 3 | Targa veicolo | `NESSUNA` |
-| 4 | Ora di entrata | `0` |
-| 5 | Minuto di entrata | `0` |
-
-### Piazzole affittabili del Piano A
-
-Esempio:
-
-```csv
-1,NO,NESSUNA,0,0,NO
-```
-
-Campi:
-
-| Posizione | Significato | Esempio |
-| ---: | --- | --- |
-| 1 | Numero piazzola | `1` |
-| 2 | Occupata | `NO` |
-| 3 | Targa veicolo | `NESSUNA` |
-| 4 | Ora di entrata | `0` |
-| 5 | Minuto di entrata | `0` |
-| 6 | Affittata | `NO` |
-
----
-
-## Tariffe e ricavi
-
-Il progetto calcola i ricavi in base alla tipologia di veicolo o servizio.
-
-| Tipo | Tariffa |
-| --- | ---: |
-| Scooter | `1.50 € / ora` |
-| Auto ordinaria | `2.00 € / ora` |
-| Auto elettrica | `3.00 € / ora` |
-| Piazzola affittata | `100.00 €` |
-
-Il calcolo della sosta arrotonda all'ora successiva se sono presenti minuti di permanenza.
-
----
-
-## Validazione targhe
-
-Il progetto controlla il formato delle targhe prima di svolgere alcune operazioni.
-
-### Formato targa auto
-
-```text
-AA000AA
-```
-
-Dove:
-
-- i primi due caratteri sono lettere maiuscole;
-- i tre caratteri centrali sono numeri;
-- gli ultimi due caratteri sono lettere maiuscole.
-
-### Formato targa scooter
-
-```text
-AA00000
-```
-
-Dove:
-
-- i primi due caratteri sono lettere maiuscole;
-- gli ultimi cinque caratteri sono numeri.
-
----
-
-## Esecuzione del progetto
-
-Il progetto è scritto in Java e può essere aperto con un IDE come:
-
-- IntelliJ IDEA;
-- Eclipse;
-- NetBeans;
-- Visual Studio Code con estensioni Java.
-
-### Compilazione da terminale
-
-Posizionarsi nella cartella principale del progetto ed eseguire:
+From the repository root, compile the sources into a separate output directory:
 
 ```bash
-javac -d out $(find . -name "*.java")
+mkdir -p /tmp/parcheggioulivi-build
+javac --release 11 -encoding ISO-8859-1 \
+  -d /tmp/parcheggioulivi-build \
+  $(find src -name '*.java' -print)
 ```
 
-### Avvio
+The explicit `ISO-8859-1` encoding matches the legacy source files, which contain non-UTF-8 Italian text.
 
-Dopo la compilazione, eseguire la classe principale del progetto:
+### Run from Eclipse
 
-```bash
-java -cp out it.volta.ts.ulivisamuel.parcheggioulivi.Main
-```
+The repository contains Eclipse project metadata configured for Java 11:
 
-> **Nota:** il progetto utilizza file CSV locali. È quindi importante mantenere i file `.csv` nella posizione prevista dal codice, oppure aggiornare i percorsi nei metodi di lettura e scrittura.
+1. Import the repository as an existing Eclipse Java project.
+2. Confirm that the project uses a Java 11 JRE.
+3. Run `src/it/volta/ts/ulivisamuel/parcheggioulivi/Main.java` as a Java application.
 
----
+The program opens an interactive menu. Select `0` to exit.
 
-## Note sul progetto
+### Data files
 
-Questo repository contiene un **progetto scolastico del 2023**.
+The application uses the five CSV files in the repository as its parking-state data store. The implementation refers to them through Windows-style relative paths (`..\parcheggioulivi\...`). As a result, the repository does not provide a verified cross-platform command-line runtime procedure; the Eclipse project configuration and path layout should be reviewed before running it outside the original environment.
 
-Il progetto è stato realizzato con finalità didattiche, principalmente per esercitarsi su:
+## Testing
 
-- modellazione di classi Java;
-- ereditarietà;
-- classi astratte;
-- enumerazioni;
-- gestione di input da console;
-- lettura e scrittura su file;
-- uso di file CSV come sistema di persistenza;
-- separazione tra dati, logica applicativa e classi di supporto.
+No automated test source files, test framework configuration, or test scripts are present in the repository.
 
----
+## Project status
 
-## Possibili miglioramenti futuri
+The Git history records iterative development from November to December 2022, including parking-space listing, check-in, vehicle search, rental, check-out, and revenue functionality. A later README-only commit is dated 2026, but no current maintenance or production deployment configuration is present.
 
-Alcune possibili evoluzioni del progetto potrebbero essere:
+## License
 
-- sostituire i file CSV con un database relazionale;
-- aggiungere un'interfaccia grafica;
-- migliorare la gestione degli errori;
-- rendere configurabili i percorsi dei file;
-- aggiungere test automatici;
-- introdurre una gestione utenti/amministratore;
-- salvare lo storico degli ingressi e delle uscite;
-- generare report giornalieri dei ricavi.
-
----
-
-## Autore
-
-Progetto realizzato da **Samuel Ulivi**.
-
----
-
-## Licenza
-
-Questo progetto è stato sviluppato per scopi scolastici e didattici.
+No license file or explicit license declaration is present in the repository. Licensing therefore requires human review.
